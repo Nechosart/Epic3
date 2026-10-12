@@ -30,8 +30,9 @@ int main() {
 		}
 	}
 
-	cout << "Сума прогресії: " << sum << endl;
-	cout << "Кількість потрібних елементів: " << n << endl;
+	cout << "Progression sum: " << sum << endl;
+	cout << "Progression exact sum: 0.829538" << endl;
+	cout << "Used elements count: " << n << endl;
 
 	return 0;
 }
