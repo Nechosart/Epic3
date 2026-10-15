@@ -9,6 +9,7 @@ const int max_days = 31;
 const float day_limit_default = 1000;
 const int top_spending_count = 3;
 
+
 void get_min_max(float spending[], int N, float* min_spending, float* max_spending) {
 	*min_spending = spending[0];
 	for (int i = 1; i < N; i++) {
@@ -28,6 +29,7 @@ float calc_sum_spending(float spending[], int i) {
 		return spending[i] + calc_sum_spending(spending, i-1);
 	}
 }
+
 
 
 void menu_show_spending_on_days(float spending[], int N) {
@@ -134,6 +136,32 @@ void menu_days_with_over_limit(float spendings[], int N) {
 }
 
 
+void menu_top_spending_days(float spendings[], int N) {
+	for (int i = 1; i < N; i++) {
+		for (int j = i - 1; j >= 0; j--) {
+			if (spendings[j] < spendings[j+1]) {
+				float temp = spendings[j];
+				spendings[j] = spendings[j+1];
+				spendings[j+1] = temp;
+			}
+		}
+	}
+
+	int top_spending_to_show_count;
+	if (N > top_spending_count) {
+		top_spending_to_show_count = top_spending_count;
+	} else {
+		top_spending_to_show_count = N;
+	}
+
+	cout << "Топ-" << top_spending_to_show_count << " витрат: ";
+	for (int i = 0; i < top_spending_to_show_count; i++) {
+		cout << spendings[i] << ", ";
+	}
+	cout << "грн" << endl;
+}
+
+
 
 
 
@@ -200,30 +228,7 @@ int main() {
 					break;
 
 				case 4:
-					for (int i = 0; i < N; i++) {
-						spending_sorted[i] = spending[i];
-
-						for (int j = i - 1; j >= 0; j--) {
-							if (spending_sorted[j] < spending_sorted[j+1]) {
-								float temp = spending_sorted[j];
-								spending_sorted[j] = spending_sorted[j+1];
-								spending_sorted[j+1] = temp;
-							}
-						}
-					}
-
-					if (N > top_spending_count) {
-						top_spending_possible = top_spending_count;
-					} else {
-						top_spending_possible = N;
-					}
-
-					cout << "Топ-" << top_spending_possible << " витрат: ";
-					for (int i = 0; i < top_spending_possible; i++) {
-						cout << spending_sorted[i] << ", ";
-					}
-					cout << "грн" << endl;
-
+					menu_top_spending_days(spendings, N);
 					break;
 
 				case 0:
