@@ -10,6 +10,17 @@ const float day_limit_default = 1000;
 const int top_spending_count = 3;
 
 
+bool check_is_input_valid() {
+	if (cin.fail()) {
+		cin.clear();
+		cin.ignore(256, '\n');
+		cout << "Помилка вводу. Спробуйте ще раз." << endl;
+		return false;
+	}
+	return true;
+}
+
+
 void get_min_max(float spending[], int N, float* min_spending, float* max_spending) {
 	*min_spending = spending[0];
 	for (int i = 1; i < N; i++) {
@@ -105,17 +116,14 @@ void menu_spendings_statistic(float spending[], int N, float budget) {
 }
 
 
-void menu_days_with_over_limit(float spendings[], int N) {
+bool menu_days_with_over_limit(float spendings[], int N) {
 	cout << "Денний ліміт (грн, 0 = за замовчуванням): " << endl;
 
 	float day_limit;
 	cin >> day_limit;
 
-	if (cin.fail()) {
-		cin.clear();
-		cin.ignore(256, '\n');
-		cout << "Помилка вводу. Спробуйте ще раз." << endl;
-		goto menu;
+	if (check_is_input_valid() == false) {
+		return false;
 	}
 
 	if (day_limit == 0) {
@@ -133,6 +141,8 @@ void menu_days_with_over_limit(float spendings[], int N) {
 		}
 	}
 	cout << "Разом днів з перевищенням: " << days_with_over_limit << endl;
+
+	return true;
 }
 
 
@@ -169,25 +179,41 @@ int main() {
 
 	cout << "Бюджет на місяць (грн): ";
 	float budget;
-	while (true) {
+	cin >> budget;
+	while (check_is_input_valid() == false || budget <= 0) {
 		cin >> budget;
-		if (cin.fail()) {
-			cin.clear();
-			cin.ignore(256, '\n');
-			cout << "Помилка вводу. Спробуйте ще раз." << endl;
-		} else {
-			break;
-		}
 	}
 
 	cout << "Кількість днів обліку: ";
 	int N;
-	cin >> N;
+	while (true) {
+		cin >> N;
+		
+		if (check_is_input_valid() == false) {
+		} 
+		else if (N <= 0) {
+			cout << "Кількість днів має бути більша 0: ";
+		} 
+		else {
+			break;
+		}
+	}
 
 	float spending[max_days];
 	cout << "Витрати по днях (грн): ";
 	for (int i = 0; i < N; i++) {
-		cin >> spending[i];
+		while (true) {
+			cin >> spending[i];
+			
+			if (check_is_input_valid() == false) {
+			} 
+			else if (spending[i] < 0) {
+				cout << "Значення витрат за день не може бути меншим за 0: ";
+			} 
+			else {
+				break;
+			}
+		}
 	}
 
 	bool is_working = true;
@@ -207,10 +233,7 @@ int main() {
 
 			cin >> action;
 
-			if (cin.fail()) {
-				cin.clear();
-				cin.ignore(256, '\n');
-				cout << "Помилка вводу. Спробуйте ще раз." << endl;
+			if (check_is_input_valid() == false) {
 				goto menu;
 			}
 
@@ -224,7 +247,9 @@ int main() {
 					break;
 					
 				case 3:
-					menu_days_with_over_limit(spendings, N, day);
+					if (menu_days_with_over_limit(spendings, N, day) == false) {
+						goto menu;
+					}
 					break;
 
 				case 4:
