@@ -23,6 +23,7 @@ bool check_is_input_valid() {
 
 void get_min_max(float* spending, int N, float* min_spending, float* max_spending) {
 	*min_spending = spending[0];
+	*max_spending = spending[0];
 	for (int i = 1; i < N; i++) {
 		if (spending[i] < *min_spending) {
 			*min_spending = spending[i];
