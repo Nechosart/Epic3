@@ -21,7 +21,7 @@ bool check_is_input_valid() {
 }
 
 
-void get_min_max(float spending[], int N, float* min_spending, float* max_spending) {
+void get_min_max(float* spending, int N, float* min_spending, float* max_spending) {
 	*min_spending = spending[0];
 	for (int i = 1; i < N; i++) {
 		if (spending[i] < *min_spending) {
@@ -33,7 +33,7 @@ void get_min_max(float spending[], int N, float* min_spending, float* max_spendi
 	}
 }
 
-float calc_sum_spending(float spending[], int i) {
+float calc_sum_spending(float* spending, int i) {
 	if (i == 0) {
 		return spending[i];
 	} else {
@@ -43,7 +43,7 @@ float calc_sum_spending(float spending[], int i) {
 
 
 
-void menu_show_spending_on_days(float spending[], int N) {
+void menu_show_spending_on_days(float* spending, int N) {
 
 	cout << left << setw(10) << "День" 
 		<< right << setw(10) << "Витрати, грн" << endl;
@@ -55,7 +55,7 @@ void menu_show_spending_on_days(float spending[], int N) {
 }
 
 
-void menu_spendings_statistic(float spending[], int N, float budget) {
+void menu_spendings_statistic(float* spending, int N, float budget) {
 
 	float min_spending, max_spending;
 	get_min_max(spending, N, &min_spending, &max_spending);
@@ -93,7 +93,7 @@ void menu_spendings_statistic(float spending[], int N, float budget) {
 	}
 
 	cout << left << setw(32) << "Днів з покупками: "
-		<< right << setw(16) << days_with_buys << " грн" << endl
+		<< right << setw(16) << days_with_buys << endl
 		<< left << setw(32) << "Середні витрати за такий день: "
 		<< right << setw(16) << average_spending << " грн" << endl;
 
@@ -116,8 +116,8 @@ void menu_spendings_statistic(float spending[], int N, float budget) {
 }
 
 
-bool menu_days_with_over_limit(float spendings[], int N) {
-	cout << "Денний ліміт (грн, 0 = за замовчуванням): " << endl;
+bool menu_days_with_over_limit(float* spending, int N) {
+	cout << "Денний ліміт (грн, 0 - за замовчуванням(" << day_limit_default << " грн)): " << endl;
 
 	float day_limit;
 	cin >> day_limit;
@@ -131,28 +131,38 @@ bool menu_days_with_over_limit(float spendings[], int N) {
 	}
 	cout << "Ліміт: " << day_limit << " грн" << endl;
 
-	cout << "Дні з перевищенням ліміту: " << endl;
+    bool is_the_first_day_with_over_limit = true;
 	int days_with_over_limit = 0;
 	for (int i = 0; i < N; i++) {
 		if (spending[i] > day_limit) {
+            if (is_the_first_day_with_over_limit) {
+                is_the_first_day_with_over_limit = false;
+                cout << "Дні з перевищенням ліміту: " << endl;
+            }
+
 			cout << left << setw(12) << "  день " << i << ":" 
 				<< right << setw(12) << spending[i] << " грн" << endl;
 			days_with_over_limit++;
 		}
 	}
-	cout << "Разом днів з перевищенням: " << days_with_over_limit << endl;
+    if (days_with_over_limit == 0) {
+	    cout << "Немає днів з перевищенням ліміту" << endl;
+    } 
+    else {
+	    cout << "Разом днів з перевищенням: " << days_with_over_limit << endl;
+    }
 
 	return true;
 }
 
 
-void menu_top_spending_days(float spendings[], int N) {
+void menu_top_spending_days(float spending[], int N) {
 	for (int i = 1; i < N; i++) {
 		for (int j = i - 1; j >= 0; j--) {
-			if (spendings[j] < spendings[j+1]) {
-				float temp = spendings[j];
-				spendings[j] = spendings[j+1];
-				spendings[j+1] = temp;
+			if (spending[j] < spending[j+1]) {
+				float temp = spending[j];
+				spending[j] = spending[j+1];
+				spending[j+1] = temp;
 			}
 		}
 	}
@@ -166,7 +176,7 @@ void menu_top_spending_days(float spendings[], int N) {
 
 	cout << "Топ-" << top_spending_to_show_count << " витрат: ";
 	for (int i = 0; i < top_spending_to_show_count; i++) {
-		cout << spendings[i] << ", ";
+		cout << spending[i] << ", ";
 	}
 	cout << "грн" << endl;
 }
@@ -217,8 +227,6 @@ int main() {
 
 	bool is_working = true;
 	int action;
-	float spending_sorted[max_days];
-	int top_spending_possible;
 
 	// Меню
 	menu:
@@ -238,21 +246,21 @@ int main() {
 
 			switch (action) {
 				case 1:
-					menu_show_spending_on_days(spendings, N);
+					menu_show_spending_on_days(spending, N);
 					break;
 
 				case 2:
-					menu_spendings_statistic(spendings, N, budget);
+					menu_spendings_statistic(spending, N, budget);
 					break;
 					
 				case 3:
-					if (menu_days_with_over_limit(spendings, N, day) == false) {
+					if (menu_days_with_over_limit(spending, N) == false) {
 						goto menu;
 					}
 					break;
 
 				case 4:
-					menu_top_spending_days(spendings, N);
+					menu_top_spending_days(spending, N);
 					break;
 
 				case 0:
