@@ -55,7 +55,7 @@ void menu_show_spending_on_days(float* spending, int N) {
 }
 
 
-void menu_spendings_statistic(float* spending, int N, float budget) {
+void menu_spending_statistic(float* spending, int N, float budget) {
 
 	float min_spending, max_spending;
 	get_min_max(spending, N, &min_spending, &max_spending);
@@ -250,7 +250,7 @@ int main() {
 					break;
 
 				case 2:
-					menu_spendings_statistic(spending, N, budget);
+					menu_spending_statistic(spending, N, budget);
 					break;
 					
 				case 3:
