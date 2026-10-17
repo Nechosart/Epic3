@@ -208,8 +208,8 @@ int main() {
 		}
 	}
 
-	float spending[max_days];
 	cout << "Витрати по днях (грн): ";
+	float spending[max_days];
 	for (int i = 0; i < N; i++) {
 		while (true) {
 			cin >> spending[i];
