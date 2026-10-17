@@ -179,10 +179,9 @@ int main() {
 
 	cout << "Бюджет на місяць (грн): ";
 	float budget;
-	cin >> budget;
-	while (check_is_input_valid() == false || budget <= 0) {
+	do {
 		cin >> budget;
-	}
+	} while (check_is_input_valid() == false || budget <= 0);
 
 	cout << "Кількість днів обліку: ";
 	int N;
